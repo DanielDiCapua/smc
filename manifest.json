@@ -1,0 +1,38 @@
+{
+  "name": "Scientific Matrix Calculator",
+  "short_name": "SMC",
+  "description": "An app to perform matrix calculation",
+  "start_url": "https://drmee.eebe.upc.edu/smc/",
+  "background_color": "#000000",
+  "orientation": "any",
+  "theme_color": "#f2f2f2",
+  "icons": [
+     {
+       "src": "img/icons/Matrix_Calculator_2_48x.png",
+       "type": "image/png",
+       "sizes": "48x48"
+     },
+     {
+       "src": "img/icons/Matrix_Calculator_2_96x.png",
+       "type": "image/png",
+       "sizes": "96x96"
+     },
+     {
+       "src": "img/icons/Matrix_Calculator_2_144x.png",
+       "type": "image/png",
+       "sizes": "134x144"
+     },
+     {
+       "src": "img/icons/Matrix_Calculator_2_192x.png",
+       "type": "image/png",
+       "sizes": "192x192"
+     },
+	 {
+       "src": "img/icons/Matrix_Calculator_512x_32bits.png",
+       "type": "image/png",
+       "sizes": "512x512"
+     }
+
+   ],
+  "display": "standalone"
+}

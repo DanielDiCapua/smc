@@ -1,0 +1,1294 @@
+﻿<!DOCTYPE html>
+<html lang=en-US>
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="An application to perform matrix operations"/>
+    <meta name="keywords" content="HTML,CSS,XML,JavaScript"/>
+    <meta name="author" content="Dr. Daniel Di Capua"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <meta name="theme-color" content="#f2f2f2" />
+    <title>Scientific Matrix Calculator</title>
+    <link rel="shortcut icon" href="img/favicon.png" type="image/png" />
+    <link rel="apple-touch-icon" sizes="48x48" href="img/icons/Matrix_Calculator_2_48x.png" />
+    <link rel="apple-touch-icon" sizes="96x96" href="img/icons/Matrix_Calculator_2_96x.png" />
+    <link rel="apple-touch-icon" sizes="134x144" href="img/icons/Matrix_Calculator_2_144x.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script defer src="js/lib/math.min.js"></script>
+    <script defer src="js/lib/jquery-3.3.1.min.js"></script>
+    <script defer src="js/lib/js.storage.min.js"></script>
+    <script defer type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            SVG: { scale: 150 },
+            jax: ["input/MathML", "output/SVG"],
+            showMathMenu: false,
+            extensions: ["mml2jax.js", "MathMenu.js", "MathZoom.js", "fast-preview.js", "AssistiveMML.js", "a11y/accessibility-menu.js"]
+        });
+    </script>
+
+    <script defer src="js/lib/MathJax-2.7.4/MathJax.js?config=MML_SVG"></script>
+    <script defer src="js/lib/numeric-1.2.6.min.js"></script>
+    <script defer src="js/keyboard_min.js"></script>
+    <script defer src="js/screen_min.js"></script>
+    <script defer src="js/preview_min.js"></script>
+    <script defer src="js/nodeSolver_min.js"></script>
+
+    <style>
+        html {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: verdana, arial, sans-serif;
+            background-color: #A9A9A9;
+            margin: 0 auto;
+            font-size: 100%;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            overflow: hidden;
+        }
+
+            body * {
+                box-sizing: border-box !important;
+            }
+
+
+        @media (max-width: 666px) and (orientation: portrait) {
+            #bodyCalculator {
+                font-size: 4.5vw;
+            }
+        }
+
+        @media (min-width: 666px) and (orientation: portrait) {
+            #bodyCalculator {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 855px) and (orientation: landscape) {
+            #bodyCalculator {
+                font-size: 4.5vh;
+            }
+        }
+
+        @media (min-width: 855px) and (orientation: landscape) {
+            #bodyCalculator {
+                font-size: 25px;
+            }
+        }
+
+
+        #bodyCalculator {
+            height: 100vh;
+            width: 100%;
+            background-color: #A9A9A9;
+            padding: 10px 5px 10px 5px;
+            overflow: auto;
+        }
+
+        #bodyConfig, #bodyAbout {
+            height: 100vh;
+            width: 100%;
+            background-color: #A9A9A9;
+            padding: 10px;
+            overflow: auto;
+        }
+
+        #bodyInputFunName, #bodyInputVarName {
+            height: 100%;
+            width: 100%;
+            background-color: #A9A9A9;
+            padding: 20px 10px 20px 10px;
+            overflow: auto;
+        }
+
+        #bodyMatrix {
+            background-color: #A9A9A9;
+            height: 100%;
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            overflow: auto;
+        }
+
+        #bodyConfig, #bodyAbout, #bodyMatrix, #bodyInputFunName, #bodyInputVarName {
+            display: none;
+        }
+
+        .input_class,
+        .name_parameter {
+            font-size: 1.0em;
+            height: 100%;
+            align-content: center;
+            display: inline-block;
+            padding-left: 5px;
+            border: 1px solid black;
+        }
+
+        name_parameter_label {
+            font-size: 1.0em;
+            height: 100%;
+        }
+
+        #titleLine_div {
+            width: 100%;
+            display: table;
+            margin-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            overflow: auto;
+        }
+
+        #Titulo {
+            font-size: 1.0em;
+            font-weight: bold;
+            width: 90%;
+            float: left;
+        }
+
+        #Config_div {
+            width: 10%;
+            float: left;
+        }
+
+        #btnConfig {
+            font-size: 1.0em;
+            font-weight: bold;
+            width: 100%;
+            background-color: #A9A9A9;
+            line-height: 1.0em;
+            margin: 0 auto;
+            padding: 0;
+            display: inline-block;
+            text-align: center;
+        }
+
+        #angleLine {
+            position: relative;
+            left: 0px;
+            height: 1.1em;
+        }
+
+        #angleLine_div {
+            position: absolute;
+            top: 0px;
+            right: 5px;
+        }
+
+            #angleLine_div strong {
+                font-size: 0.7em;
+                font-weight: bold;
+                padding-top: 3px;
+            }
+
+        table {
+            width: 100%;
+            padding: 1px;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+            table td {
+                padding: 2.5px;
+            }
+
+                table td button,
+                table td input {
+                    line-height: 1.5em;
+                }
+
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            box-shadow: inset 0 0 5px grey;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        /*  flechas
+        ::-webkit-scrollbar-button:vertical:decrement {
+            background-image: url(scrollbar/arrow_up.svg);
+            background-repeat: no-repeat;
+            background-position: 0px 0px, 0 0;
+            height: 22px;
+        }
+
+        ::-webkit-scrollbar-button:vertical:increment {
+            background-image: url(scrollbar/arrow_down.svg);
+            background-repeat: no-repeat;
+            background-position: 0px 0px, 0 0;
+            height: 22px;
+        }
+
+        ::-webkit-scrollbar-button:horizontal:decrement {
+            background-image: url(scrollbar/arrow_left.svg);
+            background-repeat: no-repeat;
+            background-position: 0px 0px, 0 0;
+            width: 22px;
+        }
+
+        ::-webkit-scrollbar-button:horizontal:increment {
+            background-image: url(scrollbar/arrow_right.svg);
+            background-repeat: no-repeat;
+            background-position: 0px 0px, 0 0;
+            width: 22px;
+        }*/
+        /*corner*/
+        ::-webkit-scrollbar-corner {
+            background: #F2F2F2;
+            border-top: 1px solid #D9D9D9;
+            border-left: 1px solid #D9D9D9;
+        }
+
+        input[type=button] {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 100%;
+            border-color: black;
+        }
+
+        #btnPow,
+        #btnLeftArrow,
+        #btnRoot,
+        #btnRightArrow,
+        #btnParenthesis,
+        #btnTranspose,
+        #btnInverse,
+        #btnSin,
+        #btnCos,
+        #btnTan,
+        #btnFun,
+        #btnDblContr,
+        #btnTrace,
+        #btnDet,
+        #btn9,
+        #btn8,
+        #btn7,
+        #btn6,
+        #btn5,
+        #btn4,
+        #btn3,
+        #btn2,
+        #btn1,
+        #btn0,
+        #btnPoint,
+        #btnScalarProd,
+        #btnCrossProd,
+        #btnTensorProd,
+        #btnLinSolver,
+        #btnEigv,
+        #btnUserDefFun,
+        #btnEex,
+        #btnChangeSign {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.85em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #595959;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        #btnSupr_div {
+            padding-bottom: 0.05em;
+            padding-top: 0.15em;
+        }
+
+        #Span_btnCrossProd {
+            font-size: 0.8em;
+        }
+
+        #Span_btnTensorProd {
+            font-size: 0.9em;
+        }
+
+        #btnSupr {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.8em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #595959;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        #btnPlus,
+        #btnMinus,
+        #btnMultip,
+        #btnDivide,
+        #btnChangeSign {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.85em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #595959;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        #btnLibFun,
+        #btnVars {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.80em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #595959;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        #btnBackspace,
+        #btnClearAll,
+        #btnSolve {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.85em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #E69500;
+            color: black;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+        }
+
+        #btnMatrix {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.70em; /*Larger values ie. 0.75em it is not correctly seen in some devices*/
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            text-align: center;
+            background-color: #E69500;
+            color: black;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+            padding-bottom: 0.15em;
+            padding-top: 0.30em;
+        }
+
+        #MathJax_Message {
+            visibility: hidden;
+        }
+
+        #div-expr {
+            visibility: hidden;
+            display: none;
+        }
+
+        sup {
+            line-height: 0;
+        }
+
+        .mathjax-cursor {
+            background-color: #000;
+            position: absolute;
+            width: 1.2px;
+            display: block;
+            top: 0px;
+            left: 0px;
+            opacity: 0;
+        }
+
+        .mjx-chtml[tabindex]:focus, body :focus .mjx-chtml[tabindex] {
+            display: inline-table;
+            outline: none !important;
+        }
+
+        #btnPow, #btnRoot, #btnSin, #btnCos, #btnTan, #btnFun {
+            background-color: #674c4c; /*Saturation 15%*/
+        }
+
+        #btnRoot {
+            background-color: #674c4c; /*Saturation 15%*/
+            font-size: 0.80em;
+        }
+
+        #btnShift_div {
+            padding-bottom: 0.07em;
+            padding-top: 0.15em;
+        }
+
+        #btnShift {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 0.75em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #674c4c; /*Saturation 15%*/
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            padding-left: 1px;
+            padding-right: 1px;
+            padding-bottom: 0.15em;
+            padding-top: 0.30em;
+        }
+
+        *:focus {
+            outline: none;
+        }
+
+        #bodyConfig div {
+            margin-bottom: 30px;
+        }
+
+        #btnCloseConfig,
+        #btnCloseAbout,
+        #btnAcceptMatrix,
+        #btnCanceltMatrix,
+        #btnCancelConfig,
+        #btnCancelInputFunName,
+        #btnAcceptInputFunName,
+        #btnCancelInputVarName,
+        #btnAcceptInputVarName {
+            padding: 8px;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            display: table-cell;
+            background-color: #E69500;
+            color: black;
+            font-weight: bold;
+            border-radius: 10px;
+            font-size: 1.0em;
+        }
+
+        #btnCloseConfigDiv,
+        #btnCancelConfigDiv,
+        #btnCloseAboutDiv,
+        #btnAcceptMatrixDiv,
+        #btnCanceltMatrixDiv,
+        #btnCancelConfigDiv,
+        #btnCancelInputFunNameDiv,
+        #btnAcceptInputFunNameDiv,
+        #btnCancelInputVarNameDiv,
+        #btnAcceptInputVarNameDiv {
+            margin-right: 10vw;
+            margin-left: 10vw;
+            display: inline-block;
+        }
+
+        #screenLine {
+            /*height: 100%;*/
+            height: 63.5%;
+            width: 100%;
+            border-color: black;
+            padding: 5px 5px;
+        }
+
+        #screen {
+            height: 100%;
+            width: 100%;
+            font-size: 1em;
+            background-color: #FAFAFA;
+            display: inline-block;
+            padding-left: 5px;
+            padding-right: 5px;
+            visibility: visible;
+            overflow: auto;
+        }
+
+        #buffer {
+            height: 100%;
+            width: 100%;
+            font-size: 1em;
+            background-color: #FAFAFA;
+            display: none;
+            padding-left: 5px;
+            padding-right: 5px;
+            visibility: hidden;
+            overflow: auto;
+        }
+
+        .CloseContainer {
+            padding-top: 1em;
+            width: 100%;
+        }
+
+        .CloseContainerClose {
+            padding-top: 1em;
+            width: 100%;
+            text-align: center;
+        }
+
+        #UserCreateVarsMenu,
+        #UserDefFunMenu {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            z-index: 2;
+            overflow: auto;
+            padding: 1px;
+            max-height: 11em;
+            max-width: 11em;
+            color: white;
+            margin: 0px;
+        }
+
+            #UserCreateVarsMenu li div,
+            #UserDefFunMenu li div {
+                padding: 5px 5px 5px 10px;
+                font-size: 1em;
+                width: 100%;
+            }
+
+
+        #subMenuInsertVar,
+        #subMenuInsertUserDefFun {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            min-width: 50px;
+            z-index: 2;
+            overflow: auto;
+            padding: 5px;
+            /*max-height: 150px;*/
+            border-radius: 10px;
+            margin: 0px;
+        }
+
+            #subMenuInsertVar div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+            #subMenuInsertUserDefFun div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-style: italic;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+        #subMenuEditVar,
+        #subMenuEditUserDefFun {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            min-width: 50px;
+            z-index: 2;
+            overflow: auto;
+            padding: 5px;
+            /*max-height: 150px;*/
+            border-radius: 10px;
+            margin: 0px;
+        }
+
+            #subMenuEditVar div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+            #subMenuEditUserDefFun div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-style: italic;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+        #subMenuDeleteVar,
+        #subMenuDeleteUserDefFun {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            min-width: 50px;
+            z-index: 2;
+            overflow: auto;
+            padding: 5px;
+            /*max-height: 250px;*/
+            border-radius: 10px;
+            margin: 0px;
+        }
+
+            #subMenuDeleteVar div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+            #subMenuDeleteUserDefFun div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-style: italic;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+                width: 100%;
+            }
+
+        #MenuShowParams {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            width: 24.5%;
+            z-index: 2;
+            overflow: auto;
+            padding: 1px;
+            margin: 0px;
+            border-radius: 10px;
+        }
+
+            #MenuShowParams div {
+                padding: 5px 10px;
+                text-decoration: none;
+                display: block;
+                color: white;
+                font-family: "Times New Roman", Times, serif;
+                text-align: center;
+            }
+
+        #inputVar_div, #inputFun_div {
+            height: 1.5em;
+            width: 100%;
+            padding: 0px;
+            margin-bottom: 2px;
+            display: none;
+        }
+
+        .half_width {
+            width: 50%;
+            float: left;
+            padding: 2.5px;
+            line-height: 1.5em;
+        }
+
+        .quater_width {
+            width: 25%;
+            float: left;
+            padding: 2.5px;
+            line-height: 1.5em;
+        }
+
+        .third_width {
+            width: 33.33%;
+            float: left;
+            padding: 2.5px;
+            line-height: 1.5em;
+        }
+
+        #var_name, fun_name {
+            font-size: 1em;
+            font-weight: bold;
+            height: 1.35em;
+            width: 100%;
+            align-content: center;
+            display: inline-block;
+        }
+
+        #var_text {
+            font-size: 1em;
+            font-weight: bold;
+            height: 100%;
+            width: 100%;
+            align-content: center;
+            display: inline-block;
+            padding: 5px 10px 5px 10px;
+            border-radius: 10px;
+            border-color: black;
+        }
+
+
+        #btnSaveInputVar,
+        #btnBackInputVar,
+        #btnCancelInputVar,
+        #btnSaveInputFun,
+        #btnBackInputFun,
+        #btnCancelInputFun {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 1em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #674c4c; /*Saturation 15%*/
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            margin: 0 auto;
+        }
+
+        #btnShowParamsMenu {
+            display: inline-block;
+            height: 100%;
+            width: 100%;
+            font-size: 1em;
+            border-style: solid;
+            border-color: black;
+            align-content: center;
+            background-color: #595959;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            margin: 0 auto;
+        }
+
+        .show {
+            display: block;
+        }
+
+        div {
+            -webkit-user-select: none; /* Chrome/Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+ */
+        }
+
+        /*This command disable the blinking effect when click event*/ 
+        * {
+            -webkit-backface-visibility: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #ConfigListMenu {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            /*background-color: #595959;*/
+            background-color: #2C3E50;
+            z-index: 2;
+            overflow: auto;
+            padding: 1px;
+            max-height: 12em;
+            min-width: 17em;
+            color: white;
+            margin: 0px;
+        }
+
+            #ConfigListMenu li div {
+                padding: 5px 5px 5px 10px;
+                font-size: 1em;
+            }
+
+        .divisor_line {
+            height: 2px;
+            display: table-cell;
+            width: 17em;
+        }
+
+        #LibFunListMenu {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: #2C3E50;
+            z-index: 2;
+            overflow: auto;
+            padding: 1px;
+            max-height: 18em;
+            max-width: 12em;
+            color: white;
+            margin: 0px;
+        }
+
+            #LibFunListMenu li div {
+                padding: 5px 5px 5px 10px;
+                font-size: 1em;
+            }
+    </style>
+</head>
+<body onload="load();" onkeydown="KeyDownFun(event)" onkeypress="KeyPressFun(event)">
+    <div id="bodyInputFunName">
+        <div id="fun_name">
+            <strong>Function name:</strong>
+            <input id="fun_name_text" type="text" name="fun_name_text" class="input_class" size="12">
+        </div>
+        <p>
+            <strong>Number of parameters:</strong>
+            <select name="NumOfParams" id="NumOfParams" class="input_class" size="1">
+                <option value="1" selected>1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </p>
+        <div id="btnCancelInputFunNameDiv"><button id="btnCancelInputFunName" onclick="CancelInputFunName();">Cancel</button></div>
+        <div id="btnAcceptInputFunNameDiv"><button id="btnAcceptInputFunName" onclick="AcceptInputFunName();">Accept</button></div>
+    </div>
+    <div id="bodyInputVarName">
+        <div id="var_name">
+            <strong>Variable name:</strong>
+            <input id="var_name_text" type="text" name="var_name_text" class="input_class" size="12" onfocus="InputVarFocus();" onblur="InputVarBlur();">
+        </div>
+        <p>
+            <strong>Variable type:</strong>
+            <select name="VarType" id="var_type" class="input_class" size="1">
+                <option value='number' selected>Number</option>
+                <option value='vector'>Vector</option>
+                <option value='matrix'>Matrix</option>
+            </select>
+        </p>
+        <div id="btnCancelInputVarNameDiv"><button id="btnCancelInputVarName" onclick="CancelInputVarName();">Cancel</button></div>
+        <div id="btnAcceptInputVarNameDiv"><button id="btnAcceptInputVarName" onclick="AcceptInputVarName();">Accept</button></div>
+    </div>
+    <div id="bodyCalculator">
+        <div id="titleLine_div">
+            <div id="Titulo">Scientific Matrix Calculator</div>
+            <div id="Config_div">
+                <button id="btnConfig" onclick="ConfigList();">&equiv;</button>
+                <ul id="ConfigListMenu">
+                    <li><div onclick="PreferencesMenu();">Preferences</div></li>
+                    <li class="divisor_line"><hr /></li>
+                    <li><div id="btnResetData" onclick="ResetDataConfirmation();">Reset data</div></li>
+                    <li class="divisor_line"><hr /></li>
+                    <li><div id="btnHideAndShowKeyboard" onclick="HideAndShowKeyboard();">Hide keyboard</div></li>
+                    <li class="divisor_line"><hr /></li>
+                    <li><div onclick="ActiveBody('#bodyAbout');">About Scientific Matrix Calculator</div></li>
+                </ul>
+            </div>
+        </div>
+        <div id="angleLine">
+            <div id="angleLine_div">
+                <strong>Angles(rad)</strong>
+            </div>
+        </div>
+        <div id="screenLine">
+            <div id="screen" onclick='GetPosition("screen", event);' ondblclick="ZoomOriginal();" onscroll="Preview.ScrollControl();" onwheel="Mousewheel(event);"></div>
+            <div id="buffer" onclick='GetPosition("buffer", event);' ondblclick="ZoomOriginal();" onscroll="Preview.ScrollControl();" onwheel="Mousewheel(event);"></div>
+        </div>
+        <div id="inputVar_div">
+            <div class="half_width"><button id="btnSaveInputVar" onmousedown="SaveInputVar(event);">Save var</button></div>
+            <div class="quater_width"><button id="btnBackInputVar" onmousedown="BackInputVar();">Back</button></div>
+            <div class="quater_width"><button id="btnCancelInputVar" onmousedown="CancelInputVar();">Cancel</button></div>
+        </div>
+        <div id="inputFun_div">
+            <div class="quater_width">
+                <button id="btnShowParamsMenu" onmousedown="ShowParamsMenu();">Params</button>
+                <ul id="MenuShowParams"></ul>
+            </div>
+            <div class="quater_width">
+                <button id="btnBackInputFun" onmousedown="SaveInputFun(event);">Save</button>
+            </div>
+            <div class="quater_width">
+                <button id="btnSaveInputFun" onmousedown="BackInputFun();">Back</button>
+            </div>
+            <div class="quater_width">
+                <button id="btnCancelInputFun" onmousedown="CancelInputFun();">Cancel</button>
+            </div>
+        </div>
+        <div id="keyboard_div">
+            <table id="keyboard">
+                <tr id="firstLine">
+                    <td colspan="1"><button id="btnMatrix" onclick="Matrix();">MTR</button></td>
+                    <td colspan="1"><button id="btnLeftArrow" onclick="LeftArrow();"><strong>&larr;</strong></button></td>
+                    <td colspan="1"><button id="btnRightArrow" onclick="RightArrow();"><strong>&rarr;</strong></button></td>
+                    <td colspan="1"><button id="btnPow" onclick="Pow();"><strong>x</strong><sup>2</sup></button></td>
+                    <td colspan="1"><button id="btnRoot" onclick="Root();"><strong>&Sqrt;<span style="text-decoration:overline; font-size:1.05em;">&nbsp;x&nbsp;</span></strong></button></td>
+                    <td colspan="1"><button id="btnSupr" onclick="Supr();"><span id="btnSupr_div"><strong>Supr</strong></span></button></td>
+                    <td colspan="2"><button id="btnBackspace" onclick="Backspace();"><strong>&lArr;</strong></button></td>
+                </tr>
+                <tr id="secondLine">
+                    <td colspan="1"><button id="btnParenthesis" onclick="Parenthesis();"><strong>(&nbsp;)</strong></button></td>
+                    <td colspan="1"><button id="btnTranspose" onclick="Transpose_and_Inverse('Transpose');"><strong>A</strong><sup>T</sup></button></td>
+                    <td colspan="1"><button id="btnInverse" onclick="Transpose_and_Inverse('Inverse');"><strong>A</strong><sup>-1</sup></button></td>
+                    <td colspan="1"><button id="btnSin" onclick="TrigFunctions('sin');"><strong>sin</strong></button></td>
+                    <td colspan="1"><button id="btnCos" onclick="TrigFunctions('cos');"><strong>cos</strong></button></td>
+                    <td colspan="1"><button id="btnTan" onclick="TrigFunctions('tan');"><strong>tan</strong></button></td>
+                    <td colspan="1"><button id="btnFun" onclick="Pi_and_I();"><strong>π</strong></button></td>
+                    <td colspan="1"><button id="btnShift"><strong>Shift</strong></button></td>
+                </tr>
+                <tr id="thirdLine">
+                    <td colspan="1"><button id="btnDblContr" onclick="inputOperator(':');"><strong>A</strong>:<strong>B</strong></button></td>
+                    <td colspan="1"><button id="btnTrace" onclick="GenericFunction('trace');"><strong>tr</strong></button></td>
+                    <td colspan="1"><button id="btnDet" onclick="GenericFunction('det');"><strong>det</strong></button></td>
+                    <td colspan="1"><button id="btn7" onclick="inputNumber('7');"><strong>7</strong></button></td>
+                    <td colspan="1"><button id="btn8" onclick="inputNumber('8');"><strong>8</strong></button></td>
+                    <td colspan="1"><button id="btn9" onclick="inputNumber('9');"><strong>9</strong></button></td>
+                    <td colspan="1"><button id="btnMultip" onclick="inputOperator('&times;');"><strong>&times;</strong></button></td>
+                    <td colspan="1"><button id="btnDivide" onclick="Fraction();"><strong>&divide;</strong></button></td>
+                </tr>
+                <tr id="fourthLine">
+                    <td colspan="1"><button id="btnScalarProd" onclick="inputOperator('&sdot;');"><strong>a</strong>&sdot;<strong>b</strong></button></td>
+                    <td colspan="1"><button id="btnCrossProd" onclick="inputOperator('&and;');"><strong>a</strong><span id="Span_btnCrossProd">&and;</span><strong>b</strong></button></td>
+                    <td colspan="1"><button id="btnTensorProd" onclick="inputOperator('&otimes;');"><strong>a</strong><span id="Span_btnTensorProd">&otimes;</span><strong>b</strong></button></td>
+                    <!--<td colspan="1"><button id="btnTensorProd" onclick="inputOperator('&otimes;');"><strong>a</strong>&otimes;<strong>b</strong></button></td>-->
+                    <td colspan="1"><button id="btn4" onclick="inputNumber('4');"><strong>4</strong></button></td>
+                    <td colspan="1"><button id="btn5" onclick="inputNumber('5');"><strong>5</strong></button></td>
+                    <td colspan="1"><button id="btn6" onclick="inputNumber('6');"><strong>6</strong></button></td>
+                    <td colspan="1"><button id="btnPlus" onclick="inputOperator('+');"><strong>+</strong></button></td>
+                    <td colspan="1"><button id="btnMinus" onclick="inputOperator('-');"><strong>-</strong></button></td>
+                </tr>
+                <tr id="fifthLine">
+                    <td colspan="2"><button id="btnLinSolver" onclick="LinSolver();"><strong>A</strong>&sdot;<strong>x</strong>=<strong>b</strong></button></td>
+                    <td colspan="1"><button id="btnEigv" onclick="GenericFunction('Eigv');"><strong>Eigv</strong></button></td>
+                    <td colspan="1"><button id="btn1" onclick="inputNumber('1');"><strong>1</strong></button></td>
+                    <td colspan="1"><button id="btn2" onclick="inputNumber('2');"><strong>2</strong></button></td>
+                    <td colspan="1"><button id="btn3" onclick="inputNumber('3');"><strong>3</strong></button></td>
+                    <td colspan="1"><button id="btnChangeSign" onclick="ChangeSign();"><strong>+/-</strong></button></td>
+                    <td colspan="1">
+                        <button id="btnVars" onclick="UserCreateVars();">VAR</button>
+                        <ul id="UserCreateVarsMenu">
+                            <li>
+                                <div id="btnCreateVar" onclick="CreateVar();">Create var</div>
+                            </li>
+                            <li>
+                                <div id="btnInsertVar" onclick="InsertVarMenu();">&#9668; Insert var</div>
+                            </li>
+                            <li>
+                                <div id="btnEditVar" onclick="EditVarMenu();">&#9668; Edit var</div>
+                            </li>
+                            <li>
+                                <div id="btnDeleteVar" onclick="DeleteVarMenu();">&#9668; Delete var</div>
+                            </li>
+                            <li>
+                                <div id="btnDeleteAllVar" onclick="DeleteAllVarConfirmation();">Delete all var</div>
+                            </li>
+                        </ul>
+                        <ul id="subMenuInsertVar"></ul>
+                        <ul id="subMenuEditVar"></ul>
+                        <ul id="subMenuDeleteVar"></ul>
+                    </td>
+                </tr>
+                <tr id="sixthLine">
+                    <td colspan="1"><button id="btnClearAll" onclick="ClearAll();"><strong>CA</strong></button></td>
+                    <td colspan="1">
+                        <button id="btnUserDefFun" onclick="CreateUserDefFunMenu();">f(x)</button>
+                        <ul id="UserDefFunMenu">
+                            <li>
+                                <div id="btnCreateUserDefFun" onclick="CreateUserDefFun();">Create function</div>
+                            </li>
+                            <li>
+                                <div id="btnInsertUserDefFun" onclick="InsertUserDefFunMenu();">Insert function&nbsp; &#9658;</div>
+                            </li>
+                            <li>
+                                <div id="btnEditUserDefFun" onclick="EditUserDefFunMenu();">Edit function&nbsp;&nbsp;&nbsp;&nbsp; &#9658;</div>
+                            </li>
+                            <li>
+                                <div id="btnDeleteUserDefFun" onclick="DeleteUserDefFunMenu();">Delete function &#9658;</div>
+                            </li>
+                            <li>
+                                <div id="btnAllDeleteUserDefFun" onclick="DeleteAllUserDefFunConfirmation();">Delete all func</div>
+                            </li>
+                        </ul>
+                        <ul id="subMenuInsertUserDefFun"></ul>
+                        <ul id="subMenuEditUserDefFun"></ul>
+                        <ul id="subMenuDeleteUserDefFun"></ul>
+                    </td>
+                    <td colspan="1">
+                        <button id="btnLibFun" onclick="LibraryFunctionsList();">LIB</button>
+                        <ul id="LibFunListMenu">
+                            <li id="funlib_label"><u>Functions Lib:</u></li>
+                            <li><div onclick="InsertFun('abs');">abs(x)</div></li>
+                            <li><div onclick="InsertFun('cosh');">cosh(x)</div></li>
+                            <li><div onclick="InsertFun('exp');">exp(x)</div></li>
+                            <li><div onclick="InsertFun('log');">log(x)</div></li>
+                            <li><div onclick="InsertFun('log10');">log10(x)</div></li>
+                            <li><div onclick="InsertFun('norm');">norm(x)</div></li>
+                            <li><div onclick="InsertFun('normalize');">normalize(x)</div></li>
+                            <li><div onclick="InsertFun('sinh');">sinh(x)</div></li>
+                            <li><div onclick="InsertFun('tanh');">tanh(x)</div></li>
+                        </ul>
+                    </td>
+                    <td colspan="1"><button id="btn0" onclick="inputNumber('0');"><strong>0</strong></button></td>
+                    <td colspan="1"><button id="btnPoint" onclick="inputNumber('.');"><strong>.</strong></button></td>
+                    <td colspan="1"><button id="btnEex" onclick="Eex();"><strong>EEX</strong></button></td>
+                    <td colspan="2"><button id="btnSolve" onclick="Solve();"><strong>SOLVE</strong></button></td>
+                </tr>
+            </table>
+        </div>
+        <div class="mathjax-cursor" id="mathjax-cursor"></div>
+    </div>
+    <div id="bodyMatrix">
+        <h3>Insert new matrix</h3>
+        <p>
+            Matrix type:
+            <select name="matrix_type" id="matrix_type" class="input_class" size="1" onchange="MatrixTypeFun(this.value);">
+                <option value="Rectangular" selected>Rectangular matrix</option>
+                <option value="Square">Square matrix</option>
+                <option value="Vector">Vector</option>
+                <option value="Row vector">Row vector</option>
+                <option value="Identity matrix">Identity matrix</option>
+            </select>
+        </p>
+        <p id="NumRowsP">
+            Number of rows:
+            <select name="NumRows" id="NumRows" class="input_class" size="1" onchange="RowsChangeFun(this.value);">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </p>
+        <p id="NumColsP">
+            Number of cols:
+            <select name="NumCols" id="NumCols" class="input_class" size="1">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </p>
+        <p id="AutoFillingP">
+            Automatic filled:
+            <select name="AutoFilling" id="AutoFilling" class="input_class" size="1">
+                <option value="None" selected>None</option>
+                <option value="Zero filling">Zeros</option>
+                <option value="Ones filling">Ones</option>
+                <option value="Consecutive filling">Consecutive</option>
+            </select>
+        </p>
+        <div class="CloseContainer">
+            <div id="btnCanceltMatrixDiv"><button id="btnCanceltMatrix" onclick="CancelMatrix()">Cancel</button></div>
+            <div id="btnAcceptMatrixDiv"><button id="btnAcceptMatrix" onclick="AcceptMatrix()">Accept</button></div>
+        </div>
+    </div>
+    <div id="bodyConfig">
+        <h2>Configuration</h2>
+        <div id="DefaultSizeDiv">
+            <h4>Default text size</h4>
+            <p>
+                Text size
+                <select name="defSize" id="defSize" class="input_class" size="1" onchange="DefaultTextSize(this.value);">
+                    <option value="25%">25%</option>
+                    <option value="50%">50%</option>
+                    <option value="75%">75%</option>
+                    <option value="100%" selected>100%</option>
+                    <option value="125%">125%</option>
+                    <option value="150%">150%</option>
+                    <option value="175%">175%</option>
+                    <option value="200%">200%</option>
+                    <option value="250%">250%</option>
+                    <option value="300%">300%</option>
+                </select>
+            </p>
+        </div>
+        <div id="NumberFormatDiv">
+            <h4>Numbers Format</h4>
+            <p>
+                Format type:
+                <select name="NumberFormat" id="NumberFormat" class="input_class" size="1" onchange="DefineNumberFormat(this.value);">
+                    <option value="decimals_fixed">Decimals fixed</option>
+                    <option value="exponential">Exponential</option>
+                    <option value="automatic" selected>Automatic</option>
+                </select>
+            </p>
+            <p>
+                Number of decimals:
+                <select name="NumDecimals" id="NumDecimals" class="input_class" size="1" onchange="DefineNumDecimals(this.value);">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                </select>
+            </p>
+            <p id="LowerExpP">
+                Lower Exponent:
+                <select name="lowerExp" id="lowerExp" class="input_class" size="1" onchange="DefineLowerExp(this.value);">
+                    <option value="-1" selected>-1</option>
+                    <option value="-2">-2</option>
+                    <option value="-3">-3</option>
+                    <option value="-4">-4</option>
+                    <option value="-5">-5</option>
+                </select>
+            </p>
+            <p id="UpperExpP">
+                UpperExp:
+                <select name="upperExp" id="upperExp" class="input_class" size="1" onchange="DefineUpperExp(this.value);">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                </select>
+            </p>
+        </div>
+        <div id="DefaultAnglesUnitDiv">
+            <h4>Default angles unit</h4>
+            <p>
+                Angles unit:
+                <select name="anglesUnits" id="anglesUnits" class="input_class" size="1" onchange="DefaultAnglesUnit(this.value);">
+                    <option value="radians" selected>radians</option>
+                    <option value="degrees">degrees</option>
+                </select>
+            </p>
+        </div>
+        <div class="CloseContainer">
+            <div id="btnCancelConfigDiv"><button id="btnCancelConfig" onclick="CancelPreferences();">Cancel</button></div>
+            <div id="btnCloseConfigDiv"><button id="btnCloseConfig" onclick="ClosePreferences();">Accept</button></div>
+        </div>
+    </div>
+    <div id="bodyAbout">
+        <h3>About Scientific Matrix Calculator</h3>
+        <p>Scientific Matrix Calculator has been developed by Dr. Daniel Di Capua.</p>
+        <p>This application is based in part on the following open-source libraries which have been used without modifications:</p>
+        <p>1-) Mathjax licensed under Apache 2.0 License. </p>
+        <p>2-) Math.js licensed under Apache 2.0 License. </p>
+        <p>3-) Numeric.js 1.2.6 licensed under MIT License, Copyright (C) 2011 by Sébastien Loisel.</p>
+        <p>4-) jQuery.js licensed under MIT License, Copyright JS Foundation and other contributors https://js.foundation/. </p>
+        <p>5-) js.storage.js licensed under MIT License, Copyright (c) 2016 Julien Maurel. </p>
+        <div class="CloseContainerClose">
+            <button id="btnCloseAbout" onclick="ActiveBody('#bodyCalculator');">Close</button>
+        </div>
+    </div>
+    <script>
+        var bodyCalculator_div = document.getElementById("bodyCalculator");
+        var bodyCalculatorPaddingTopPx = window.getComputedStyle(bodyCalculator_div).paddingTop;
+        var bodyCalculatorPaddingTop = parseInt(bodyCalculatorPaddingTopPx.slice(0, (bodyCalculatorPaddingTopPx.length - 2)));
+        var bodyCalculatorPaddingBottomPx = window.getComputedStyle(bodyCalculator_div).paddingBottom;
+        var bodyCalculatorPaddingBottom = parseInt(bodyCalculatorPaddingBottomPx.slice(0, (bodyCalculatorPaddingBottomPx.length - 2)));
+        var diff = bodyCalculatorPaddingTop + bodyCalculatorPaddingBottom;
+        var WindowHeight = window.innerHeight - diff;
+
+        //This is the Keybord heigth proposed by the browser
+        var keyboardLineHeight_browser = document.getElementById("keyboard").offsetHeight;
+
+        //This is the Title heigth proposed by the browser
+        var title_marginTopPx = window.getComputedStyle(titleLine_div).marginTop;
+        var title_marginTop = parseInt(title_marginTopPx.slice(0, (title_marginTopPx.length - 2)));
+        var title_marginBottomPx = window.getComputedStyle(titleLine_div).marginBottom;
+        var title_marginBottom = parseInt(title_marginBottomPx.slice(0, (title_marginBottomPx.length - 2)));
+        var TitleTableHeight_browser = document.getElementById("titleLine_div").offsetHeight + title_marginTop + title_marginBottom;
+
+        var AngleLineDive_browser = document.getElementById("angleLine").offsetHeight;
+
+        var screenLineHeight = WindowHeight - TitleTableHeight_browser
+                             - keyboardLineHeight_browser - AngleLineDive_browser;
+
+        var screenLineHeightPx = screenLineHeight + "px";
+        document.getElementById("screenLine").style.height = screenLineHeightPx;
+
+        var screenLine_div = document.getElementById("screenLine");
+        var screenLinePaddingTopPx = window.getComputedStyle(screenLine_div).paddingTop;
+        var screenLinePaddingTop = screenLinePaddingTopPx.slice(0, (screenLinePaddingTopPx.length - 2));
+
+        var screenLinePaddingBottomPx = window.getComputedStyle(screenLine_div).paddingBottom;
+        var screenLinePaddingBottom = screenLinePaddingBottomPx.slice(0, (screenLinePaddingBottomPx.length - 2));
+
+        screenLineHeight = screenLineHeight - screenLinePaddingTop - screenLinePaddingBottom;
+        screenLineHeightPx = screenLineHeight + "px";
+        document.getElementById("screen").style.lineHeight = screenLineHeightPx;
+        document.getElementById("buffer").style.lineHeight = screenLineHeightPx;
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/smc/sw_workbox.js')
+                .then(function (registration) {
+                    console.log('Registration successful, scope is:', registration.scope);
+                })
+                .catch(function (error) {
+                    console.log('Service worker registration failed, error:', error);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

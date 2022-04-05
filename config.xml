@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.phonegap.scientificmatrixcalculator" version="1.1.3" versionCode = "10103" xmlns="http://www.w3.org/ns/widgets">
+  <name>Scientific Matrix Calculator</name>
+  <description>
+    An app to perform matrix operations
+  </description>
+  <author email="dicapua@cimne.upc.edu" href="www.upc.edu">
+    Daniel Di Capua
+  </author>
+  <content src="index.html" />
+  <icon src="img/logo.png"/>
+  
+  <access origin="*" />
+  <!--<allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+  <allow-intent href="tel:*" />
+  <allow-intent href="sms:*" />
+  <allow-intent href="mailto:*" />
+  <allow-intent href="geo:*" />-->
+  
+  <allow-intent href="https://*/*" />
+  <allow-intent href="https://*/*" />
+
+  <platform name="android">
+    <allow-intent href="market:*" />
+  </platform>
+
+  <!--<preference name="android-minSdkVersion" value="26" />-->
+  
+  <platform name="winphone" />
+
+  <platform name="ios">
+    <allow-intent href="itms:*" />
+    <allow-intent href="itms-apps:*" />
+  </platform>
+</widget>
